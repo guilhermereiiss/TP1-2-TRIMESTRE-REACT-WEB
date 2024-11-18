@@ -1,16 +1,12 @@
+import AppProvider from '../src/context/context'
+import Routes from "./routes";
 
-import './App.scss'
-
-import RouterApp from './routes'
-
-function App() {
-
-
+const App = () => {
   return (
-    <div>
-      <RouterApp />
-    </div>
-  )
-}
+    <AppProvider>
+      <Routes />
+    </AppProvider>
+  );
+};
 
-export default App
+export default App;

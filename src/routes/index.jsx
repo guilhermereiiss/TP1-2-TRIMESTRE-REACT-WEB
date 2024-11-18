@@ -46,46 +46,36 @@
 
 // export default RouterApp;
 
-import {
-    createBrowserRouter,
-    RouterProvider,
-} from "react-router-dom";
-import { AuthProvider } from "./AuthContext"; 
+import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } from "react-router-dom";
+// import { AuthProvider } from "./AuthContext"; 
 import Home from "../views/Home";
-import SigIn from "../views/SigIn";
-import SingUp from "../views/SingUp";
+import Dashboard from "../views/Dashboard";
+import SignIn from "../views/SigIn";
+import SignUp from "../views/SingUp";
 import Form from "../views/Form";
 import Settings from "../views/Settings";
-import PrivateRoute from "./PrivateRoute"; 
+// import PrivateRoute from "./PrivateRoute"; 
 
-const router = createBrowserRouter([
-    {
-        path: "/TP/",
-        element: <PrivateRoute element={<Home />} />,
-    },
-    {
-        path: "/TP/Form",
-        element: <PrivateRoute element={<Form />} />,
-    },
-    {
-        path: "/TP/SigIn",
-        element: <SigIn />,
-    },
-    {
-        path: "/TP/SingUp",
-        element: <SingUp />,
-    },
-    {
-        path: "/TP/Settings",
-        element: <PrivateRoute element={<Settings />} />,
-    },
-]);
+import Protected from "./protected";
+import { handleVerificationProtected, isAuthenticated, signIn } from "../services/authentication";
 
-const RouterApp = () => (
-    <AuthProvider>
-        <RouterProvider router={router} />
-    </AuthProvider>
+const router = createBrowserRouter(
+    createRoutesFromElements(
+        <Route path="/TP/">
+            <Route element={<Protected/>}>
+                <Route index element={<Home />} loader={() => handleVerificationProtected()}/>
+                <Route path="dashboard" element={<Dashboard />} loader={() => handleVerificationProtected()}/>
+                <Route path="new/:type" element={<Form />} loader={() => handleVerificationProtected()}/>
+                <Route path=":type/:id" element={<Form />} loader={() => handleVerificationProtected()}/>
+            </Route>
+            <Route path="signin" element={<SignIn />} loader={() => isAuthenticated()}/>
+            <Route path="signup" element={<SignUp />} loader={() => isAuthenticated()}/>
+        </Route>
+    )
 );
 
-export default RouterApp;
+const Index = () => {
+    return <RouterProvider router={router} />
+}
 
+export default Index;
